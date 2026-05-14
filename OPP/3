@@ -1,0 +1,104 @@
+import random
+
+class Monster:
+    def __init__(self, name, hp, dmg):
+        self.name = name
+        self.hp = hp
+        self.dmg = dmg
+
+    def take_damage(self, damage):
+        self.hp -= damage
+        print(f"{self.name} получил {damage} урона. У него {self.hp} хп.")
+
+    def attack_hunter(self, hunter):
+        hunter.hp -= self.dmg
+        print(f"{self.name} атакует охотника на {self.dmg} урона. У охотника {hunter.hp} хп.")
+
+
+class Weapon:
+    def __init__(self, name, dmg):
+        self.name = name
+        self.dmg = dmg
+
+    def use(self, monster):
+        monster.take_damage(self.dmg)
+
+
+class Zombie(Monster):
+    def __init__(self):
+        super().__init__(name="Зомби", hp=120, dmg=10)
+
+    def take_damage(self, damage):
+        self.hp -= damage
+        print(f"Зомби теряет конечность! Получено: {damage}. HP: {self.hp}")
+
+
+class Vampire(Monster):
+    def __init__(self):
+        super().__init__(name="Дракула", hp=80, dmg=15)
+
+    def take_damage(self, damage):
+        absorbed = 5
+        actual_damage = damage - absorbed
+        if actual_damage < 0:
+            actual_damage = 0
+        self.hp -= actual_damage
+        print(f"{self.name} поглощает {absorbed} урона! Получено: {actual_damage}. HP: {self.hp}")
+
+
+class Ghost(Monster):
+    def __init__(self):
+        super().__init__(name="Призрак", hp=60, dmg=20)
+
+    def take_damage(self, damage):
+        if random.random() < 0.3:  # 30% шанс уклониться
+            print(f"{self.name} уклонился от удара! HP: {self.hp}")
+            return
+        self.hp -= damage
+        print(f"{self.name} потерял {damage} Хп. Сейчас у него {self.hp} Хп.")
+
+
+class Werewolf(Monster):
+    def __init__(self):
+        super().__init__(name="Оборотень", hp=100, dmg=25)
+        self.transformed = False
+
+    def take_damage(self, damage):
+        self.hp -= damage
+        print(f"{self.name} получил {damage} урона. HP: {self.hp}")
+        if self.hp < 50 and not self.transformed:
+            self.transformed = True
+            print(f"{self.name} трансформируется! Сила увеличивается!")
+
+
+class SilverSword(Weapon):
+    def __init__(self):
+        super().__init__(name="Серебряный меч", dmg=30)
+
+
+class HolyWater(Weapon):
+    def __init__(self):
+        super().__init__(name="Святая вода", dmg=20)
+
+
+class CrossbowBolt(Weapon):
+    def __init__(self):
+        super().__init__(name="Арбалет с болтом", dmg=25)
+
+z = Zombie()
+z.take_damage(30)
+
+v = Vampire()
+v.take_damage(30)
+
+g = Ghost()
+g.take_damage(30)
+
+w = Werewolf()
+w.take_damage(30)
+
+weapons = [SilverSword(), HolyWater(), CrossbowBolt()]
+zombie = Zombie()
+for w in weapons:
+    w.use(zombie)
+# Полиморфизм: один цикл — три разных удара!
